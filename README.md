@@ -9,6 +9,8 @@ git add <nombre del fichero> -> Se usa para añadir el fichero sobre el que se q
 
 git restore <nombre del fichero> -> Se usa para descartar los cambios realizados en el fichero.
 
-Esto es otra prueba.
+git commit -m "mensaje" -> Se usa para commitear los ficheros que se quieren subir al repositorio.
+
+git push -> Se usa para subir los cambios al repositorio.
 
 
