@@ -1,5 +1,7 @@
 ---
 title: "MÓDULO 7: PROYECTO CIENCIA DE DATOS REPRODUCIBLE"
+subtitle: "Tasa de empleo en industria y SDI"
+author: "Alexandra Reguera Gonzalez"
 output: html_document
 ---
 
@@ -281,6 +283,18 @@ paises_potenciales <- unique(datos_filtrados$country)
 
 # Imprimir la lista de países
 print(paises_potenciales)
+
+# Crear una tabla con los países
+tabla_potenciales <- data.frame(Pais = paises_potenciales)
+
+# Añadir las columnas de percentiles como un único valor
+tabla_potenciales$Percentil_SDI <- sdi_threshold
+tabla_potenciales$Percentil_Empleo <- employment_rate_threshold
+
+
+# Imprimir la tabla con kable
+knitr::kable(tabla_potenciales, 
+             caption = "Lista de países potenciales y percentiles correspondientes")
 
 ```
 
