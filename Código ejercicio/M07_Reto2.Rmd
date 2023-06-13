@@ -1,9 +1,10 @@
 ---
 title: "MÓDULO 7: PROYECTO CIENCIA DE DATOS REPRODUCIBLE"
-output: rmd
+output: html_document
 ---
 
-# R PARA CIENCIA DE DATOS
+# Tasa de empleo en industria y SDI
+## Dashboard para la estrategia de ventas de una empresa
 
 
 ```{r}

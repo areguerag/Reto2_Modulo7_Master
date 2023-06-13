@@ -1,0 +1,99 @@
+\documentclass{article}
+
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\begin{Schunk}
+\begin{Sinput}
+> knitr::opts_chunk$set(echo = TRUE)
+> library(readxl)
+> library(dplyr)
+> library(openxlsx)
+> library(tidyverse)
+> library(xfun)
+\end{Sinput}
+\end{Schunk}
+
+\usepackage{Sweave}
+\begin{document}
+\input{Informe_R_Sweave_knitr_Reto_2_Modulo_7-concordance}
+
+\title{Informe de empleo industrial y SDI}
+\author{Alexandra Reguera González}
+\date{\today}
+\maketitle
+
+\section{Cargar y preparar los datos}
+
+\begin{Schunk}
+\begin{Sinput}
+> datos <- read_excel("../Datos/industry_workers_percent_of_employment.xlsx")
+> datos_largos <- datos %>%
++   pivot_longer(cols = -country, names_to = "year", values_to = "employment_rate")
+\end{Sinput}
+\end{Schunk}
+
+\section{Análisis descriptivo}
+
+\begin{Schunk}
+\begin{Sinput}
+> # Tasa de empleo global por año
+> global_employment_rate <- datos_largos %>%
++   group_by(year) %>%
++   summarise(mean_employment_rate = mean(employment_rate, na.rm = TRUE))
+> # Países que aumentaron su tasa de empleo:
+> employment_increase <- datos_largos %>%
++   group_by(country) %>%
++   arrange(year) %>%
++   summarise(change_in_employment = employment_rate[n()] - employment_rate[1]) %>%
++   filter(change_in_employment > 0)
+> # Países que redujeron su tasa de empleo
+> employment_decrease <- datos_largos %>%
++   group_by(country) %>%
++   arrange(year) %>%
++   summarise(change_in_employment = employment_rate[n()] - employment_rate[1]) %>%
++   filter(change_in_employment < 0)
+\end{Sinput}
+\end{Schunk}
+
+\section{Análisis de correlación}
+
+\begin{Schunk}
+\begin{Sinput}
+> datos_wide <- datos_largos %>%
++   pivot_wider(names_from = country, values_from = employment_rate)
+> correlation_matrix <- cor(datos_wide[,-1], use = "pairwise.complete.obs")
+\end{Sinput}
+\end{Schunk}
+
+\section{Visualización}
+
+\subsection{Tasa de empleo global a lo largo del tiempo}
+
+\begin{Schunk}
+\begin{Sinput}
+> # Convertir el año a numérico
+> global_employment_rate$year <- as.numeric(global_employment_rate$year)
+> # Crear la gráfica
+> ggplot(global_employment_rate, aes(x = year, y = mean_employment_rate, group=1)) +
++   geom_line() +
++   labs(title = "Tasa de empleo global a lo largo del tiempo",
++        x = "Año", y = "Tasa de empleo global")
+\end{Sinput}
+\end{Schunk}
+
+\subsection{Tasa de empleo promedio por continente a lo largo del tiempo}
+
+\begin{Schunk}
+\begin{Sinput}
+> # Definir los países para cada continente
+> # [código omitido por razones de longitud]
+> # Crear una nueva columna 'continente' con NA (sin asignación inicial)
+> datos_largos$continente <- NA
+> # Luego asignar los continentes a cada país
+> # [código omitido por razones de longitud]
+\end{Sinput}
+\end{Schunk}
+
+\end{document}

@@ -1,9 +1,10 @@
 ---
 title: "MÓDULO 7: PROYECTO CIENCIA DE DATOS REPRODUCIBLE"
-output: rmd
+output: html_document
 ---
 
-# R PARA CIENCIA DE DATOS
+# Tasa de empleo en industria y SDI
+## Dashboard para la estrategia de ventas de una empresa
 
 
 ```{r}
@@ -14,7 +15,7 @@ library(openxlsx)
 library(tidyverse)
 library(xfun)
 
-datos <- read_excel("industry_workers_percent_of_employment.xlsx")
+datos <- read_excel("Datos/industry_workers_percent_of_employment.xlsx")
 
 ##Preparación de datos a formato largo
 datos_largos <- datos %>%
@@ -195,7 +196,7 @@ head(paises_crecimiento, 100)
 #Nuevo dataset Indice de desarrollo sostenible
 
 ##Cargar el dataset
-datos_sdi <- read_excel("C:/Users/Alexandra/github/Reto2_Modulo7_Master/sdi.xlsx")
+datos_sdi <- read_excel("Datos/sdi.xlsx")
 
 ##Convertir el dataset a formato largo
 datos_sdi_largos <- datos_sdi %>%
