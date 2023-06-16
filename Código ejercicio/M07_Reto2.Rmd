@@ -1,8 +1,15 @@
 ---
-title: "MÓDULO 7: PROYECTO CIENCIA DE DATOS REPRODUCIBLE"
-subtitle: "Tasa de empleo en industria y SDI"
+title: 'MÓDULO 7: PROYECTO CIENCIA DE DATOS REPRODUCIBLE'
 author: "Alexandra Reguera Gonzalez"
-output: html_document
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
+  ioslides_presentation:
+    widescreen: yes
+    smaller: yes
+subtitle: Tasa de empleo en industria y SDI
+runtime: shiny
 ---
 
 # Tasa de empleo en industria y SDI
@@ -17,7 +24,7 @@ library(openxlsx)
 library(tidyverse)
 library(xfun)
 
-datos <- read_excel("../Datos/industry_workers_percent_of_employment.xlsx")
+datos <- read_excel("..\Datos\industry_workers_percent_of_employment.xlsx")
 
 ##Preparación de datos a formato largo
 datos_largos <- datos %>%
@@ -44,6 +51,7 @@ employment_decrease <- datos_largos %>%
   filter(change_in_employment < 0)
 ```
 
+# Análisis de correlación
 
 ```{r}
 #Análisis de correlación
@@ -53,9 +61,10 @@ datos_wide <- datos_largos %>%
 correlation_matrix <- cor(datos_wide[,-1], use = "pairwise.complete.obs")
 ```
 
+# Visualizaciones
 
 ```{r}
-#Visualización
+
 ##Convertir el año a numérico
 global_employment_rate$year <- as.numeric(global_employment_rate$year)
 
@@ -66,7 +75,7 @@ ggplot(global_employment_rate, aes(x = year, y = mean_employment_rate, group=1))
        x = "Año", y = "Tasa de empleo global")
 ```
 
-
+## Definir los países para cada continente 
 ```{r}
 ##Definir los países para cada continente
 paises_africa <- c("Angola", "Benin", "Burkina Faso", "Burundi", "Botswana", "Central African Republic", "Cote d'Ivoire", 
@@ -120,6 +129,7 @@ datos_largos$continente[datos_largos$country %in% paises_oceania] <- "Oceanía"
 datos_largos$continente[datos_largos$country %in% paises_centro_caribe] <- "América Central y el Caribe"
 ```
 
+## Calcular la media por continente y año
 
 ```{r}
 ##Calcular la media por continente y año
@@ -135,10 +145,9 @@ ggplot(media_por_continente, aes(x = year, y = mean_employment_rate, color = con
   theme_minimal()
 ```
 
+## **¿Cómo se compara la tasa de empleo en la industria de España con la de otros países de la Unión Europea y del mundo?**
 
 ```{r}
-#Calculos España
-##¿Cómo se compara la tasa de empleo en la industria de España con la de otros países de la Unión Europea y del mundo?
 
 ##Datos de España
 datos_spain <- datos_largos %>%
@@ -164,9 +173,10 @@ ggplot() +
    scale_color_manual(values = c("Spain" = "red", "Europa" = "blue"))
 ```
 
+## **¿Cómo ha evolucionado la tasa de empleo en la industria en España a lo largo del tiempo?**
 
 ```{r}
-#¿Cómo ha evolucionado la tasa de empleo en la industria en España a lo largo del tiempo?
+
 
 ggplot(datos_spain, aes(x = year, y = employment_rate)) +
    geom_line() +
@@ -175,9 +185,10 @@ ggplot(datos_spain, aes(x = year, y = employment_rate)) +
    ggtitle("Evolución de la tasa de empleo en la industria en España")
 ```
 
+## **¿Qué países han experimentado un crecimiento significativo en su tasa de empleo en el sector industrial?**
 
 ```{r}
-#¿Qué países han experimentado un crecimiento significativo en su tasa de empleo en el sector industrial?
+
 ##Calcular la tasa de crecimiento
 datos_largos$growth_rate <- datos_largos %>%
    group_by(country) %>%
@@ -193,12 +204,12 @@ paises_crecimiento <- datos_largos %>%
 head(paises_crecimiento, 100)
 ```
 
+## Añadimos nuevo dataset *Indice de desarrollo sostenible*
 
 ```{r}
-#Nuevo dataset Indice de desarrollo sostenible
 
 ##Cargar el dataset
-datos_sdi <- read_excel("../Datos/sdi.xlsx")
+datos_sdi <- read_excel("..\Datos\sdi.xlsx")
 
 ##Convertir el dataset a formato largo
 datos_sdi_largos <- datos_sdi %>%
@@ -305,11 +316,11 @@ Industrias existentes: Algunos países tienen industrias fuertes que son relevan
 Interés en la sostenibilidad: Algunos países, como Islandia, tienen un alto interés en la sostenibilidad, lo que podría significar que hay una mayor demanda de productos que ayuden a alcanzar los ODS.
 Crecimiento económico y potencial de desarrollo: Los países en desarrollo o con economías emergentes, como Qatar y Emiratos Árabes Unidos, pueden estar buscando tecnologías y soluciones sostenibles para apoyar su crecimiento económico.
 Teniendo en cuenta estos factores, recomendaría centrar nuestra estrategia de ventas en estos cinco países: 
-•	Alemania
-•	Estados Unidos
-•	Finlandia
-•	Austria
-•	Islandia
+*Alemania
+*Estados Unidos
+*Finlandia
+*Austria
+*Islandia
 
 ```{r}
 

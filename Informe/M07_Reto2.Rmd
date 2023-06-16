@@ -1,13 +1,20 @@
 ---
-title: "MÓDULO 7: PROYECTO CIENCIA DE DATOS REPRODUCIBLE"
-subtitle: "Dashboard para la estrategia de ventas de una empresa"
+title: 'MÓDULO 7: PROYECTO CIENCIA DE DATOS REPRODUCIBLE'
 author: "Alexandra Reguera Gonzalez"
-output: pdf_document
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
+  ioslides_presentation:
+    widescreen: yes
+    smaller: yes
+subtitle: Tasa de empleo en industria y SDI
+runtime: shiny
 ---
 
 # Tasa de empleo en industria y SDI
+## Dashboard para la estrategia de ventas de una empresa
 
-## Cargar las bibliotecas necesarias
 
 ```{r}
 ##Cargar las bibliotecas necesarias
@@ -16,23 +23,14 @@ library(dplyr)
 library(openxlsx)
 library(tidyverse)
 library(xfun)
-```
 
-## Preparación y depuración de datos
-
-```{r}
-datos <- read_excel("Datos/industry_workers_percent_of_employment.xlsx")
+datos <- read_excel("..\Datos\industry_workers_percent_of_employment.xlsx")
 
 ##Preparación de datos a formato largo
 datos_largos <- datos %>%
   pivot_longer(cols = -country, names_to = "year", values_to = "employment_rate")
-```
 
-
-## Análisis descriptivo
-
-```{r}
-
+#Análisis descriptivo
 ##Tasa de empleo global por año
 global_employment_rate <- datos_largos %>%
   group_by(year) %>%
@@ -53,7 +51,7 @@ employment_decrease <- datos_largos %>%
   filter(change_in_employment < 0)
 ```
 
-## Análisis de correlación
+# Análisis de correlación
 
 ```{r}
 #Análisis de correlación
@@ -63,9 +61,7 @@ datos_wide <- datos_largos %>%
 correlation_matrix <- cor(datos_wide[,-1], use = "pairwise.complete.obs")
 ```
 
-## Visualizaciones
-
-### Gráfico 1
+# Visualizaciones
 
 ```{r}
 
@@ -79,8 +75,7 @@ ggplot(global_employment_rate, aes(x = year, y = mean_employment_rate, group=1))
        x = "Año", y = "Tasa de empleo global")
 ```
 
-## Agrupar países por continente 
-
+## Definir los países para cada continente 
 ```{r}
 ##Definir los países para cada continente
 paises_africa <- c("Angola", "Benin", "Burkina Faso", "Burundi", "Botswana", "Central African Republic", "Cote d'Ivoire", 
@@ -134,18 +129,14 @@ datos_largos$continente[datos_largos$country %in% paises_oceania] <- "Oceanía"
 datos_largos$continente[datos_largos$country %in% paises_centro_caribe] <- "América Central y el Caribe"
 ```
 
-## Calcular las medias por continente y año
+## Calcular la media por continente y año
 
 ```{r}
 ##Calcular la media por continente y año
 media_por_continente <- datos_largos %>%
   group_by(continente, year) %>%
   summarise(mean_employment_rate = mean(employment_rate, na.rm = TRUE), .groups = "drop")
-```
 
-### Gráfico 2
-
-```{r}
 ##Crear el gráfico
 ggplot(media_por_continente, aes(x = year, y = mean_employment_rate, color = continente)) +
   geom_line(aes(group = continente)) +
@@ -154,10 +145,7 @@ ggplot(media_por_continente, aes(x = year, y = mean_employment_rate, color = con
   theme_minimal()
 ```
 
-
-## Preguntas a responder con nuestro Dashboard
-
-### Grafico 4: ¿Cómo se compara la tasa de empleo en la industria de España con la de otros países de la Unión Europea y del mundo?
+## **¿Cómo se compara la tasa de empleo en la industria de España con la de otros países de la Unión Europea y del mundo?**
 
 ```{r}
 
@@ -185,11 +173,10 @@ ggplot() +
    scale_color_manual(values = c("Spain" = "red", "Europa" = "blue"))
 ```
 
-
-### Grafico 3: ¿Cómo ha evolucionado la tasa de empleo en la industria en España a lo largo del tiempo?
+## **¿Cómo ha evolucionado la tasa de empleo en la industria en España a lo largo del tiempo?**
 
 ```{r}
-#¿Cómo ha evolucionado la tasa de empleo en la industria en España a lo largo del tiempo?
+
 
 ggplot(datos_spain, aes(x = year, y = employment_rate)) +
    geom_line() +
@@ -198,8 +185,7 @@ ggplot(datos_spain, aes(x = year, y = employment_rate)) +
    ggtitle("Evolución de la tasa de empleo en la industria en España")
 ```
 
-
-### Gráfico 5: ¿Qué países han experimentado un crecimiento significativo en su tasa de empleo en el sector industrial?
+## **¿Qué países han experimentado un crecimiento significativo en su tasa de empleo en el sector industrial?**
 
 ```{r}
 
@@ -218,14 +204,12 @@ paises_crecimiento <- datos_largos %>%
 head(paises_crecimiento, 100)
 ```
 
-## Relación con el Indice de Desarrollo Sostenible
-### Añadimos nuevo dataset
+## Añadimos nuevo dataset *Indice de desarrollo sostenible*
 
 ```{r}
-#Nuevo dataset Indice de desarrollo sostenible
 
 ##Cargar el dataset
-datos_sdi <- read_excel("Datos/sdi.xlsx")
+datos_sdi <- read_excel("..\Datos\sdi.xlsx")
 
 ##Convertir el dataset a formato largo
 datos_sdi_largos <- datos_sdi %>%
@@ -236,7 +220,6 @@ datos_unidos <- datos_largos %>%
   left_join(datos_sdi_largos, by = c("country", "year"))
 ```
 
-## Análisis de correlación
 
 ```{r}
 ##Calcular la correlación entre la tasa de empleo y el IDS
@@ -246,7 +229,6 @@ correlacion <- cor(datos_unidos$employment_rate, datos_unidos$sdi, use = "pairwi
 print(correlacion)
 ```
 
-### Primeras conclusiones
 
 El Índice de Desarrollo Sostenible (IDS) puede proporcionar un marco integral para entender la salud económica, social y ambiental de un país, lo que es crucial para una empresa enfocada en apoyar los Objetivos de Desarrollo Sostenible (ODS). Un alto IDS puede indicar que un país ya está comprometido con la sostenibilidad y podría estar más abierto a productos y servicios que ayuden a avanzar en esa dirección.
 
@@ -256,7 +238,6 @@ Finalmente, analizar la correlación entre el IDS y la tasa de empleo en la indu
 
 En conclusión, estas variables definitivamente podrían proporcionar información valiosa para ayudarte a tomar decisiones sobre la expansión de tu empresa.
 
-### Gráfico 6: Gráfico de dispersión por continentes
 
 ```{r}
 # Unir los datos
@@ -273,7 +254,6 @@ ggplot(datos_combinados, aes(x = employment_rate, y = sdi, color = continente)) 
 
 ```
 
-### Estrategia de ventas
 
 Si mi empresa vende productos de software que ayudan a otras empresas a alcanzar los Objetivos de Desarrollo Sostenible (ODS), tu interés principal probablemente será enfocarte en aquellos países que tienen altas tasas de empleo en la industria (eje x) pero índices de desarrollo sostenible relativamente bajos (eje y).
 
@@ -281,15 +261,11 @@ Estos países estarían situados en el cuadrante inferior derecho del gráfico d
 
 Aunque sería importante considerar otras variables y factores contextuales que no están reflejados en el gráfico. Por ejemplo, es posible que algunos países en este cuadrante ya estén tomando medidas para mejorar su sostenibilidad, o es posible que existan barreras culturales o regulatorias para adoptar nuevas tecnologías en ciertos países.
 
-## Regresión lineal
-
 ```{r}
 #Rregresión lineal
 modelo_lineal <- lm(sdi ~ employment_rate, data = datos_combinados)
 summary(modelo_lineal)
 ```
-
-### Conclusiones
 
 Coeficientes: Aquí vemos el resultado de la regresión. La estimación de la "intercepción" es el valor esperado de 'sdi' cuando 'employment_rate' es 0. La estimación de 'employment_rate' nos dice cuánto cambia el 'sdi' en promedio por cada aumento unitario en 'employment_rate'.
 
@@ -302,8 +278,6 @@ R-cuadrado: El R-cuadrado es una medida de qué tan bien se ajusta el modelo a l
 Esto sugiere que, aunque puede haber una relación entre estas dos variables, hay muchos otros factores en juego y tu empresa puede necesitar considerar otras variables al formular su estrategia de ventas. Por ejemplo, podrías considerar aspectos como el nivel de ingresos del país, la estabilidad política, la legislación medioambiental, etc.
 
 Por tanto, deberemos escoger los países en los que estas otras variables sean favorables.
-
-## Cálculo de percentiles para escoger un primer listado de países potenciales.
 
 ```{r}
 
@@ -335,23 +309,85 @@ knitr::kable(tabla_potenciales,
 
 ```
 
-## Otros aspectos a analizar para determinar la decisión:
-
+Aspectos importantes a tener en cuenta:
 Economía: Los países con economías fuertes y desarrolladas, como Alemania y Estados Unidos, podrían tener más empresas que estén dispuestas y sean capaces de invertir en productos que ayuden a lograr los ODS.
 Políticas de sostenibilidad: Algunos países tienen políticas gubernamentales fuertes de apoyo a los ODS. Por ejemplo, Finlandia es reconocido por su compromiso con la sostenibilidad y tiene una serie de políticas en vigor para fomentar la sostenibilidad en las empresas.
 Industrias existentes: Algunos países tienen industrias fuertes que son relevantes para los ODS. Por ejemplo, Austria tiene una industria de energías renovables en crecimiento y puede ser un objetivo potencial para productos relacionados con la energía sostenible.
 Interés en la sostenibilidad: Algunos países, como Islandia, tienen un alto interés en la sostenibilidad, lo que podría significar que hay una mayor demanda de productos que ayuden a alcanzar los ODS.
 Crecimiento económico y potencial de desarrollo: Los países en desarrollo o con economías emergentes, como Qatar y Emiratos Árabes Unidos, pueden estar buscando tecnologías y soluciones sostenibles para apoyar su crecimiento económico.
-
-
-## Decisión de la estrategia de ventas:
-
 Teniendo en cuenta estos factores, recomendaría centrar nuestra estrategia de ventas en estos cinco países: 
-•	Alemania
-•	Estados Unidos
-•	Finlandia
-•	Austria
-•	Islandia
+*Alemania
+*Estados Unidos
+*Finlandia
+*Austria
+*Islandia
 
+```{r}
 
+library(shiny)
+library(ggplot2)
+library(plotly)
+
+datos_combinados$year <- as.numeric(datos_combinados$year)
+
+ui <- fluidPage(
+    titlePanel("Dashboard de Empleo Industrial y Desarrollo Sostenible"),
+    sidebarLayout(
+        sidebarPanel(
+            selectInput("countries1", "Selecciona un país para el primer gráfico:",
+                        choices = unique(datos_combinados$country)),
+            selectInput("countries2", "Selecciona un país para el segundo gráfico:",
+                        choices = unique(datos_combinados$country))
+        ),
+        mainPanel(
+            tabsetPanel(
+                tabPanel("Gráficos de Tiempo",
+                         plotOutput("linePlot1"),
+                         plotOutput("linePlot2")),
+                tabPanel("Gráfico de Dispersión", plotlyOutput("scatterPlot")),
+                tabPanel("Tabla Clasificatoria", tableOutput("rankTable"))
+            )
+        )
+    )
+)
+
+server <- function(input, output) {
+    output$linePlot1 <- renderPlot({
+        req(input$countries1)
+        datos_seleccionados <- subset(datos_combinados, country == input$countries1)
+        ggplot(datos_seleccionados, aes(x = year)) +
+        geom_line(aes(y = employment_rate), color = "blue") +
+        geom_line(aes(y = sdi), color = "red") +
+        labs(x = "Año", y = "Valor", color = "Indicador")
+    })
+
+    output$linePlot2 <- renderPlot({
+        req(input$countries2)
+        datos_seleccionados <- subset(datos_combinados, country == input$countries2)
+        ggplot(datos_seleccionados, aes(x = year)) +
+        geom_line(aes(y = employment_rate), color = "blue") +
+        geom_line(aes(y = sdi), color = "red") +
+        labs(x = "Año", y = "Valor", color = "Indicador")
+    })
+
+    output$scatterPlot <- renderPlotly({
+        datos_seleccionados <- subset(datos_combinados, year == 2019)
+        plot <- ggplot(datos_seleccionados, aes(x = employment_rate, y = sdi, color = continente, text = paste("País: ", country, "<br> Continente: ", continente))) +
+                geom_point() +
+                labs(x = "Tasa de Empleo Industrial", y = "Índice de Desarrollo Sostenible")
+        ggplotly(plot, tooltip = "text")
+    })
+
+    output$rankTable <- renderTable({
+        datos_seleccionados <- subset(datos_combinados, year == 2019)
+        tabla_rank <- datos_seleccionados %>%
+                      arrange(desc(sdi), desc(employment_rate)) %>%
+                      select(country, year, sdi, employment_rate)
+        tabla_rank
+    })
+}
+
+shinyApp(ui = ui, server = server)
+
+```
 

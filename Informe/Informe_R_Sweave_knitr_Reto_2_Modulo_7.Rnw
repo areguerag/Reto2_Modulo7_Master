@@ -1,4 +1,12 @@
-\documentclass{article}
+\documentclass[a4paper,10pt]{article}
+
+\RequirePackage{fancyhdr}
+\renewcommand{\baselinestretch}{1.1}
+\addtolength{\textwidth}{2cm}
+\addtolength{\oddsidemargin}{-1.5cm}
+\addtolength{\textheight}{3cm}
+\addtolength{\topmargin}{-1.5cm}
+
 
 \title{Tasa de empleo en industria y SDI}
 \author{Alexandra Reguera Gonzalez}
@@ -9,11 +17,13 @@
 \maketitle
 
 \begin{abstract}
-Análisis detallado de la tasa de empleo en la industria y su relación con el Índice de Desarrollo Sostenible (SDI).
+Análisis detallado de la tasa de empleo en la industria y su relación con el 
+Índice de Desarrollo Sostenible (SDI).
 \end{abstract}
 
 <<setup, include=FALSE>>=
 # Definir las bibliotecas y configuración global para el documento
+
 library(knitr)
 library(readxl)
 library(dplyr)
@@ -25,12 +35,14 @@ library(xfun)
 \section{Preparación y depuración de datos}
 
 <<cargar_datos>>=
+
 # Carga y preparación de datos
-datos <- read_excel("../Datos/industry_workers_percent_of_employment.xlsx")
+datos <- read_excel("..\Datos\industry_workers_percent_of_employment.xlsx")
 
 # Preparación de datos a formato largo
 datos_largos <- datos %>%
-  pivot_longer(cols = -country, names_to = "year", values_to = "employment_rate")
+  pivot_longer(cols = -country, 
+               names_to = "year", values_to = "employment_rate")
 @
 
 \section{Análisis descriptivo}
@@ -45,14 +57,16 @@ global_employment_rate <- datos_largos %>%
 employment_increase <- datos_largos %>%
   group_by(country) %>%
   arrange(year) %>%
-  summarise(change_in_employment = employment_rate[n()] - employment_rate[1]) %>%
+  summarise(change_in_employment = employment_rate[n()] 
+            - employment_rate[1]) %>%
   filter(change_in_employment > 0)
 
 # Países que redujeron su tasa de empleo
 employment_decrease <- datos_largos %>%
   group_by(country) %>%
   arrange(year) %>%
-  summarise(change_in_employment = employment_rate[n()] - employment_rate[1]) %>%
+  summarise(change_in_employment = employment_rate[n()] 
+            - employment_rate[1]) %>%
   filter(change_in_employment < 0)
 @
 
@@ -68,7 +82,7 @@ correlation_matrix <- cor(datos_wide[,-1], use = "pairwise.complete.obs")
 
 \section{Visualizaciones}
 
-<<visualizaciones, fig.width=8, fig.height=6, echo=FALSE>>=
+<<visualizaciones, fig.width=8, fig.height=6, fig=TRUE>>=
 # Convertir el año a numérico
 global_employment_rate$year <- as.numeric(global_employment_rate$year)
 
@@ -82,70 +96,103 @@ ggplot(global_employment_rate, aes(x = year, y = mean_employment_rate, group=1))
 
 \section{Definir los países para cada continente}
 
-<<continentes>>=
-paises_africa <- c("Angola", "Benin", "Burkina Faso", "Burundi", "Botswana", "Central African Republic", "Cote d'Ivoire", 
-                   "Cameroon", "Congo, Dem. Rep.", "Congo, Rep.", "Comoros", "Cape Verde", "Djibouti", "Algeria", "Egypt", 
-                   "Western Sahara", "Eritrea", "Ethiopia", "Gabon", "Gambia", "Ghana", "Guinea", "Guinea-Bissau", 
-                   "Equatorial Guinea", "Kenya", "Lesotho", "Liberia", "Libya", "Morocco", "Madagascar", "Mali", 
-                   "Mauritania", "Mauritius", "Malawi", "Mozambique", "Namibia", "Niger", "Nigeria", "Reunion", "Rwanda", 
-                   "Seychelles", "Sudan", "Saint Helena", "Sierra Leone", "Senegal", "Somalia", "South Sudan", 
-                   "Sao Tome and Principe", "Swaziland", "Seychelles", "Chad", "Togo", "Tunisia", "Tanzania", "Uganda", 
-                   "South Africa", "Zambia", "Zimbabwe")
+<<continentes, width = 20>>=
+paises_africa <- c("Angola", "Benin", "Burkina Faso", "Burundi", "Botswana", 
+                   "Central African Republic", "Cote d'Ivoire", "Cameroon", 
+                   "Congo, Dem. Rep.", "Congo, Rep.", "Comoros", "Cape Verde", 
+                   "Djibouti", "Algeria", "Egypt", "Western Sahara", "Eritrea", 
+                   "Ethiopia", "Gabon", "Gambia", "Ghana", "Guinea", 
+                   "Guinea-Bissau", "Equatorial Guinea", "Kenya", "Lesotho", 
+                   "Liberia", "Libya", "Morocco", "Madagascar", "Mali", 
+                   "Mauritania", "Mauritius", "Malawi","Mozambique", "Namibia", 
+                   "Niger", "Nigeria", "Reunion", "Rwanda", "Seychelles", 
+                   "Sudan", "Saint Helena", "Sierra Leone", "Senegal", 
+                   "Somalia", "South Sudan", "Sao Tome and Principe", 
+                   "Swaziland", "Seychelles", "Chad", "Togo", "Tunisia", 
+                   "Tanzania","Uganda","South Africa", "Zambia", "Zimbabwe")
 
-paises_asia <- c("Afghanistan", "Armenia", "Azerbaijan", "Bahrain", "Bangladesh", "Bhutan", "Brunei", "Cambodia", "China", 
-                 "Cyprus", "Georgia", "Hong Kong, China", "Indonesia", "India", "Iran", "Iraq", "Israel", "Japan", 
-                 "Jordan", "Kazakhstan", "Kyrgyz Republic", "South Korea", "Kuwait", "Lebanon", "Sri Lanka", 
-                 "Macao, China", "Maldives", "Malaysia", "Mongolia", "Myanmar", "Nepal", "Oman", "Pakistan", "Palestine", 
-                 "Philippines", "North Korea", "Qatar", "Saudi Arabia", "Singapore", "Syria", "Thailand", "Tajikistan", 
-                 "Turkmenistan", "East Timor", "Turkey", "Taiwan", "United Arab Emirates", "Uzbekistan", "Vietnam", "Yemen")
+paises_asia <- c("Afghanistan", "Armenia", "Azerbaijan", "Bahrain", 
+                 "Bangladesh", "Bhutan", "Brunei", "Cambodia", "China", 
+                 "Cyprus", "Georgia", "Hong Kong, China", "Indonesia", "India", 
+                 "Iran", "Iraq", "Israel", "Japan", "Jordan", "Kazakhstan", 
+                 "Kyrgyz Republic", "South Korea", "Kuwait", "Lebanon", 
+                 "Sri Lanka", "Macao, China", "Maldives", "Malaysia", 
+                 "Mongolia", "Myanmar", "Nepal", "Oman", "Pakistan", "Palestine", 
+                 "Philippines", "North Korea", "Qatar", "Saudi Arabia", 
+                 "Singapore", "Syria", "Thailand", "Tajikistan", "Turkmenistan", 
+                 "East Timor", "Turkey", "Taiwan", "United Arab Emirates", 
+                 "Uzbekistan", "Vietnam", "Yemen")
 
-paises_europa <- c("Albania", "Austria", "Belgium", "Bulgaria", "Bosnia and Herzegovina", "Belarus", "Channel Islands", 
-                   "Switzerland", "Czech Republic", "Germany", "Denmark", "Spain", "Estonia", "Finland", "France", 
-                   "United Kingdom", "Greece", "Croatia", "Hungary", "Ireland", "Iceland", "Italy", "Lithuania", 
-                   "Luxembourg", "Latvia", "Moldova", "North Macedonia", "Malta", "Netherlands", "Norway", "Poland", 
-                   "Portugal", "Romania", "Russia", "Sweden", "Slovenia", "Slovakia", "Ukraine")
+paises_europa <- c("Albania", "Austria", "Belgium", "Bulgaria", 
+                   "Bosnia and Herzegovina", "Belarus", "Channel Islands", 
+                   "Switzerland", "Czech Republic", "Germany", "Denmark", 
+                   "Spain", "Estonia", "Finland", "France", "United Kingdom", 
+                   "Greece", "Croatia", "Hungary", "Ireland", "Iceland", 
+                   "Italy", "Lithuania", "Luxembourg", "Latvia", "Moldova", 
+                   "North Macedonia", "Malta", "Netherlands", "Norway", "Poland", 
+                   "Portugal", "Romania", "Russia", "Sweden", "Slovenia", 
+                   "Slovakia", "Ukraine")
 
-paises_america_norte <- c("Canada", "United States", "Mexico", "Greenland", "Bermuda")
+paises_america_norte <- c("Canada", "United States", "Mexico", "Greenland", 
+                          "Bermuda")
 
-paises_america_sur <- c("Argentina", "Bolivia", "Brazil", "Chile", "Colombia", "Ecuador", "Guyana", "Peru", 
+paises_america_sur <- c("Argentina", "Bolivia", "Brazil", "Chile", "Colombia", 
+                        "Ecuador", "Guyana", "Peru", 
                         "Paraguay", "Suriname", "Uruguay", "Venezuela")
 
-paises_oceania <- c("Australia", "Fiji", "Micronesia", "Guam", "Kiribati", "Marshall Islands", "New Caledonia", 
-                    "Norfolk Island", "Nauru", "New Zealand", "French Polynesia", "Papua New Guinea", "Palau", 
-                    "Solomon Islands", "Tonga", "Vanuatu", "Samoa")
+paises_oceania <- c("Australia", "Fiji", "Micronesia", "Guam", "Kiribati", 
+                    "Marshall Islands", "New Caledonia", "Norfolk Island", 
+                    "Nauru", "New Zealand", "French Polynesia", 
+                    "Papua New Guinea", "Palau", "Solomon Islands", "Tonga", 
+                    "Vanuatu", "Samoa")
 
-paises_centro_caribe <- c("Antigua and Barbuda", "Aruba", "Barbados", "Saint Barthelemy", "Belize", "Costa Rica", "Cuba", 
-                          "Curacao", "Dominican Republic", "Grenada", "Guatemala", "Honduras", "Haiti", "Jamaica", 
-                          "Saint Kitts and Nevis", "Cayman Islands", "Saint Lucia", "Saint Martin (French part)", 
-                          "Montserrat", "Nicaragua", "Panama", "Puerto Rico", "El Salvador", "Sint Maarten (Dutch part)", 
-                          "Turks and Caicos Islands", "Trinidad and Tobago", "Saint Vincent and the Grenadines", 
+paises_centro_caribe <- c("Antigua and Barbuda", "Aruba", "Barbados", 
+                          "Saint Barthelemy", "Belize", "Costa Rica", "Cuba", 
+                          "Curacao", "Dominican Republic", "Grenada", 
+                          "Guatemala", "Honduras", "Haiti", "Jamaica", 
+                          "Saint Kitts and Nevis", "Cayman Islands", 
+                          "Saint Lucia", "Saint Martin (French part)", 
+                          "Montserrat", "Nicaragua", "Panama", "Puerto Rico", 
+                          "El Salvador", "Sint Maarten (Dutch part)", 
+                          "Turks and Caicos Islands", "Trinidad and Tobago", 
+                          "Saint Vincent and the Grenadines", 
                           "British Virgin Islands", "Virgin Islands (U.S.)")
 
 ##Crear una nueva columna 'continente' con NA (sin asignación inicial)
 datos$continente <- NA
 
 ##Luego asignar los continentes a cada país
-datos_largos$continente[datos_largos$country %in% paises_africa] <- "África"
-datos_largos$continente[datos_largos$country %in% paises_asia] <- "Asia"
-datos_largos$continente[datos_largos$country %in% paises_europa] <- "Europa"
-datos_largos$continente[datos_largos$country %in% paises_america_norte] <- "América del Norte"
-datos_largos$continente[datos_largos$country %in% paises_america_sur] <- "América del Sur"
-datos_largos$continente[datos_largos$country %in% paises_oceania] <- "Oceanía"
-datos_largos$continente[datos_largos$country %in% paises_centro_caribe] <- "América Central y el Caribe"
+datos_largos$continente[
+  datos_largos$country %in% paises_africa] <- "África"
+datos_largos$continente[
+  datos_largos$country %in% paises_asia] <- "Asia"
+datos_largos$continente[
+  datos_largos$country %in% paises_europa] <- "Europa"
+datos_largos$continente[
+  datos_largos$country %in% paises_america_norte] <- "América del Norte"
+datos_largos$continente[
+  datos_largos$country %in% paises_america_sur] <- "América del Sur"
+datos_largos$continente[
+  datos_largos$country %in% paises_oceania] <- "Oceanía"
+datos_largos$continente[
+  datos_largos$country %in% paises_centro_caribe] <- "América Central y el Caribe"
 @
 
 
 \section{Calcular la media por continente y año}
 
-<<media_continente_año>>=
+<<media_continente_año, fig.width=8, fig.height=6, fig=TRUE>>=
 ##Calcular la media por continente y año
 media_por_continente <- datos_largos %>%
   group_by(continente, year) %>%
-  summarise(mean_employment_rate = mean(employment_rate, na.rm = TRUE), .groups = "drop")
+  summarise(mean_employment_rate = mean(
+    employment_rate, na.rm = TRUE), .groups = "drop")
 
 ##Crear el gráfico
-ggplot(media_por_continente, aes(x = year, y = mean_employment_rate, color = continente)) +
-  geom_line(aes(group = continente)) + labs(title = "Tasa de empleo promedio por continente a lo largo del tiempo",
+ggplot(media_por_continente, aes(x = year, y = mean_employment_rate, 
+                                 color = continente)) +
+  geom_line(aes(group = continente)) + labs(
+    title = "Tasa de empleo promedio por continente a lo largo del tiempo",
        x = "Año", y = "Tasa de empleo promedio") +
   theme_minimal()
 @
@@ -153,12 +200,18 @@ ggplot(media_por_continente, aes(x = year, y = mean_employment_rate, color = con
 
 \section{¿Cómo se compara la tasa de empleo en la industria de España con la de otros países de la Unión Europea y del mundo?}
 
-<<calculos_spain>>=
+<<calculos_spain, fig.width=8, fig.height=6, fig=TRUE>>=
 datos_spain <- datos_largos %>%
    filter(country == "Spain")
 
 ##Datos de la Unión Europea
-paises_europa <- c("Austria", "Belgium", "Bulgaria", "Croatia", "Cyprus", "Czech Republic", "Denmark", "Estonia", "Finland", "France", "Germany", "Greece", "Hungary", "Ireland", "Italy", "Latvia", "Lithuania", "Luxembourg", "Malta", "Netherlands", "Poland", "Portugal", "Romania", "Slovakia", "Slovenia", "Spain", "Sweden")
+paises_europa <- c("Austria", "Belgium", "Bulgaria", "Croatia", "Cyprus", 
+                   "Czech Republic", "Denmark", "Estonia", "Finland", "France", 
+                   "Germany", "Greece", "Hungary", "Ireland", "Italy", "Latvia", 
+                   "Lithuania", "Luxembourg", "Malta", "Netherlands", "Poland", 
+                   "Portugal", "Romania", "Slovakia", "Slovenia", "Spain", 
+                   "Sweden")
+
 datos_europa <- datos_largos %>%
    filter(country %in% paises_europa) %>%
    group_by(year) %>%
@@ -170,8 +223,10 @@ datos_europa$year <- as.numeric(datos_europa$year)
 
 ##Comparación
 ggplot() +
-   geom_line(data = datos_spain, aes(x = year, y = employment_rate, color = "Spain")) +
-   geom_line(data = datos_europa, aes(x = year, y = mean_employment_rate, color = "Europa")) +
+   geom_line(data = datos_spain, aes(x = year, 
+                                     y = employment_rate, color = "Spain")) +
+   geom_line(data = datos_europa, aes(
+     x = year, y = mean_employment_rate, color = "Europa")) +
    labs(x = "Año", y = "Tasa de empleo", color = "Región") +
    theme_minimal() +
    scale_color_manual(values = c("Spain" = "red", "Europa" = "blue"))
@@ -182,7 +237,7 @@ ggplot() +
 \section{¿Cómo ha evolucionado la tasa de empleo en la industria en España a lo largo del tiempo?}
 
 
-<<data_empleo_spain>>=
+<<data_empleo_spain, fig.width=8, fig.height=6, fig=TRUE>>=
 ggplot(datos_spain, aes(x = year, y = employment_rate)) +
    geom_line() +
    labs(x = "Año", y = "Tasa de empleo") +
@@ -198,14 +253,14 @@ datos_largos$growth_rate <- datos_largos %>%
    group_by(country) %>%
    mutate(growth_rate = (employment_rate/lag(employment_rate) - 1) * 100)
 
-##Ordenar los países por la tasa de crecimiento promedio
+##Ordenar los paises por la tasa de crecimiento promedio
 paises_crecimiento <- datos_largos %>%
    group_by(country) %>%
    summarise(mean_growth_rate = mean(employment_rate, na.rm = TRUE)) %>%
    arrange(desc(mean_growth_rate))
 
-##Mostrar los primeros 100 países
-head(paises_crecimiento, 100)
+##Mostrar los primeros 10 paises
+head(paises_crecimiento, 10)
 @
 
 \section{Nuevo dataset Indice de desarrollo sostenible}
@@ -213,7 +268,7 @@ head(paises_crecimiento, 100)
 
 <<dataset_SDI>>=
 ##Cargar el dataset
-datos_sdi <- read_excel("../Datos/sdi.xlsx")
+datos_sdi <- read_excel("..\Datos\sdi.xlsx")
 
 ##Convertir el dataset a formato largo
 datos_sdi_largos <- datos_sdi %>%
@@ -228,7 +283,8 @@ datos_unidos <- datos_largos %>%
 
 <<correlacion>>=
 ##Calcular la correlación entre la tasa de empleo y el IDS
-correlacion <- cor(datos_unidos$employment_rate, datos_unidos$sdi, use = "pairwise.complete.obs")
+correlacion <- cor(datos_unidos$employment_rate, 
+                   datos_unidos$sdi, use = "pairwise.complete.obs")
 
 ##Imprimir el coeficiente de correlación
 print(correlacion)
@@ -248,8 +304,9 @@ En conclusión, estas variables definitivamente podrían proporcionar informaci�
 
 \section{Gráfico 6: Gráfico de dispersión por continentes}
 
-<<Unir_los_datos>>=
-datos_combinados <- merge(datos_largos, datos_sdi_largos, by = c("country", "year"), all = TRUE)
+<<Unir_los_datos, fig.width=8, fig.height=6, fig=TRUE>>=
+datos_combinados <- merge(
+  datos_largos, datos_sdi_largos, by = c("country", "year"), all = TRUE)
 
 # Gráfico de dispersión diferenciando los continentes
 ggplot(datos_combinados, aes(x = employment_rate, y = sdi, color = continente)) +
@@ -280,11 +337,11 @@ summary(modelo_lineal)
 
 \subsection{Conclusiones}
 
-Coeficientes: Aquí vemos el resultado de la regresión. La estimación de la "intercepción" es el valor esperado de 'sdi' cuando 'employment_rate' es 0. La estimación de 'employment_rate' nos dice cuánto cambia el 'sdi' en promedio por cada aumento unitario en 'employment_rate'.
+Coeficientes: Aquí vemos el resultado de la regresión. La estimación de la "intercepción" es el valor esperado de 'sdi' cuando 'employment rate' es 0. La estimación de 'employment rate' nos dice cuánto cambia el 'sdi' en promedio por cada aumento unitario en 'employment rate'.
 
-Pr(>|t|): Esta es la probabilidad de que los coeficientes sean iguales a cero, dado los datos que tenemos. Si es muy pequeño (generalmente menor a 0.05), entonces podemos rechazar la hipótesis nula de que el coeficiente es igual a cero. En este caso, ambos coeficientes tienen un p-valor de menos de 2e-16, lo que sugiere que ambas relaciones son estadísticamente significativas.
+$Pr(>|t|)$: Esta es la probabilidad de que los coeficientes sean iguales a cero, dado los datos que tenemos. Si es muy pequeño (generalmente menor a 0.05), entonces podemos rechazar la hipótesis nula de que el coeficiente es igual a cero. En este caso, ambos coeficientes tienen un p-valor de menos de 2e-16, lo que sugiere que ambas relaciones son estadísticamente significativas.
 
-R-cuadrado: El R-cuadrado es una medida de qué tan bien se ajusta el modelo a los datos. Un R-cuadrado de 1 indica que el modelo explica perfectamente toda la variación en 'sdi'. En este caso, el R-cuadrado es 0.03574, lo que indica que el modelo explica aproximadamente el 3.6% de la variabilidad en 'sdi'. Esto no es muy alto, lo que sugiere que hay muchos otros factores no incluidos en el modelo que afectan 'sdi'.
+R-cuadrado: El R-cuadrado es una medida de qué tan bien se ajusta el modelo a los datos. Un R-cuadrado de 1 indica que el modelo explica perfectamente toda la variación en 'sdi'. En este caso, el R-cuadrado es 0.03574, lo que indica que el modelo explica aproximadamente el 3.6 por ciento de la variabilidad en 'sdi'. Esto no es muy alto, lo que sugiere que hay muchos otros factores no incluidos en el modelo que afectan 'sdi'.
 
 ¿Qué significa todo esto para nuestra estrategia de ventas? Aunque la tasa de empleo en la industria y el índice de desarrollo sostenible están significativamente relacionados, la tasa de empleo en la industria solo explica una pequeña parte de la variabilidad en el índice de desarrollo sostenible.
 
@@ -297,7 +354,8 @@ Por tanto, deberemos escoger los países en los que estas otras variables sean f
 <<paises_potenciales_para_expansion>>=
 # Calcular los percentiles para sdi y employment_rate
 sdi_threshold <- quantile(datos_combinados$sdi, 0.25, na.rm = TRUE)
-employment_rate_threshold <- quantile(datos_combinados$employment_rate, 0.75, na.rm = TRUE)
+employment_rate_threshold <- quantile(
+  datos_combinados$employment_rate, 0.75, na.rm = TRUE)
 
 # Filtrar los datos para los países con bajo sdi y alta tasa de empleo industrial
 datos_filtrados <- datos_combinados %>%
@@ -315,10 +373,32 @@ tabla_potenciales <- data.frame(Pais = paises_potenciales)
 # Añadir las columnas de percentiles como un único valor
 tabla_potenciales$Percentil_SDI <- sdi_threshold
 tabla_potenciales$Percentil_Empleo <- employment_rate_threshold
+
 # Imprimir la tabla con kable
+
 knitr::kable(tabla_potenciales, 
-             caption = "Lista de países potenciales y percentiles correspondientes")
+             caption = "Lista de países potenciales y percentiles correspondientes") 
 @
+
+\subsection{Recomendación para la estrategia de ventas}
+
+Hay otros aspectos importantes a tener en cuenta para la decisión:
+Economía: Los países con economías fuertes y desarrolladas, como Alemania y Estados Unidos, podrían tener más empresas que estén dispuestas y sean capaces de invertir en productos que ayuden a lograr los ODS.
+
+Políticas de sostenibilidad: Algunos países tienen políticas gubernamentales fuertes de apoyo a los ODS. Por ejemplo, Finlandia es reconocido por su compromiso con la sostenibilidad y tiene una serie de políticas en vigor para fomentar la sostenibilidad en las empresas.
+
+Industrias existentes: Algunos países tienen industrias fuertes que son relevantes para los ODS. Por ejemplo, Austria tiene una industria de energías renovables en crecimiento y puede ser un objetivo potencial para productos relacionados con la energía sostenible.
+
+Interés en la sostenibilidad: Algunos países, como Islandia, tienen un alto interés en la sostenibilidad, lo que podría significar que hay una mayor demanda de productos que ayuden a alcanzar los ODS.
+
+Crecimiento económico y potencial de desarrollo: Los países en desarrollo o con economías emergentes, como Qatar y Emiratos Árabes Unidos, pueden estar buscando tecnologías y soluciones sostenibles para apoyar su crecimiento económico.
+
+Teniendo en cuenta estos factores, recomendaría centrar nuestra estrategia de ventas en estos cinco países: 
+•	Alemania
+•	Estados Unidos
+•	Finlandia
+•	Austria
+•	Islandia
 
 
 \end{document}
