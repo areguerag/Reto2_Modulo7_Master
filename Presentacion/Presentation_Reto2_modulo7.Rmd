@@ -23,7 +23,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ```{r prep, echo=FALSE}
 
-datos <- read_excel("industry_workers_percent_of_employment.xlsx")
+datos <- read_excel("..\Datos\industry_workers_percent_of_employment.xlsx")
 
 ##Preparación de datos a formato largo
 datos_largos <- datos %>%
@@ -246,7 +246,7 @@ head(paises_crecimiento, 100)
 
 ```{r sdi, echo=FALSE}
 ##Cargar el dataset
-datos_sdi <- read_excel("sdi.xlsx")
+datos_sdi <- read_excel("..\Datos\sdi.xlsx")
 
 ##Convertir el dataset a formato largo
 datos_sdi_largos <- datos_sdi %>%
